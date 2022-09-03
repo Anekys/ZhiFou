@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}
+  知否-注册
+{% endblock %}
+{% block head %}
+  <script src="{{ url_for('static',filename='./js/jQuery.js') }}"></script>
+  <script src="{{ url_for('static',filename='./js/register.js') }}"></script>
+{% endblock %}
+{% block body %}
+  <div class="row pt-sm-5">
+    <div class="col"></div>
+    <div class="col">
+   <form action="{{ url_for("user.register") }}" method="post">
+     <div class="mb-3">
+    <label for="exampleInputNickName" class="form-label">用户昵称:</label>
+    <input type="text" class="form-control" id="exampleInputNickName" placeholder="请输入昵称" aria-describedby="nicknameHelp" name="nickname">
+    <div id="nicknameHelp" class="form-text">最高20个字符</div>
+  </div>
+     <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label">邮箱:</label>
+          <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="请输入邮箱" name="email">
+          <div id="emailHelp" class="form-text">必须为邮箱格式,例如:admin@qq.com</div>
+        </div>
+  <label for="exampleInputEmail1" class="form-label">验证码:</label>
+  <div class="input-group mb-3">
+  <input  type="text" class="form-control" placeholder="请输入验证码" aria-label="Recipient's username" aria-describedby="button-addon2" name="captcha">
+  <button id="btn-captcha" class="btn btn-outline-secondary" type="button" id="button-addon2">获取验证码</button>
+  </div>
+     <div id="captchaHelp" class="form-text">请输入邮箱中收到的验证码</div>
+     <br>
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">密码:</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="请输入密码" name="password">
+    <div id="emailHelp" class="form-text">密码至少有8个字符</div>
+  </div>
+  <div class="mb-3">
+    <label for="exampleInputConfirm" class="form-label">确认密码:</label>
+    <input type="password" class="form-control" id="exampleInputConfirm" placeholder="请输入密码" name="confirm">
+    <div id="emailHelp" class="form-text">必须与密码一致</div>
+  </div>
+  <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">注册</button>
+        </div>
+</form>
+    </div>
+    <div class="col"></div>
+  </div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}
+  {{ question.title }}
+{% endblock %}
+{% block body %}
+  <div class="row">
+    <div class="col"></div>
+    <div class="col-8">
+      <div class="card mt-3 mb-3">
+        <div class="card-header">
+          标题: {{ question.title }}
+        </div>
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <span style="font-size: medium">问题描述:</span>
+            <p>{{ question.content }}</p><br>
+            <footer class="blockquote-footer" style="text-align: right">
+              <cite title="Source Title"> {{ question.author.nickname }}</cite>
+              <div style="font-size: small">{{ question.create_time }}</div>
+            </footer>
+          </blockquote>
+        </div>
+      </div>
+      <hr>
+      {% for answer in answers %}
+        <div class="card mb-3" style="">
+          <div class="row">
+            <div class="col--md-8">
+              <div class="card-body">
+                <p class="card-text">{{ answer.content }}</p>
+                <p class="card-text" style="text-align: right">
+                  <small class="text-muted">By {{ answer.author.nickname }}</small>
+                  <br>
+                  <small class="text-muted">{{ answer.create_time }}</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr>
+      {% endfor %}
+      <form action="{{ url_for("qa.submit_answer",question_id = question.id) }}" method="post">
+        <div class="mb-3">
+          <label for="exampleInput" class="form-label">答案({{ answers|length }}):</label>
+          <input name="content" type="text" class="form-control" id="exampleInput" placeholder="请输入你的答案">
+          <div id="inputHelp" class="form-text mt-2" style="text-align: right">
+            <div>
+              <span style="margin-right: 100px;color: red">
+                {% for message in get_flashed_messages() %}
+                  {{ message }}
+                {% endfor %}
+              </span>
+              <button type="submit" class="btn btn-primary">提交回答</button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+
+    <div class="col"></div>
+  </div>
+  </div>
+{% endblock %}
