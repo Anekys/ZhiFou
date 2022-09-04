@@ -25,13 +25,18 @@ def login():
         email = request.form.get("email")
         password = request.form.get("password")
         user = UserModel.query.filter_by(email=email).first()
+        next_url = request.form.get("next_url")
         if not user:
             flash("用户不存在!")
             return redirect(url_for("user.login"))
         if check_password_hash(user.password, password):
             session["uid"] = user.id
             print(f"{user.nickname}已登录")
-            return redirect("/")
+            if next_url:
+                print("即将跳转到",next_url)
+                return redirect(next_url)
+            else:
+                return redirect("/")
         flash("用户名或密码错误!")
         return redirect(url_for("user.login"))
     flash("用户名或密码格式不正确!")

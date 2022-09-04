@@ -1,10 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}
+  知否-我的问答
+{% endblock %}
+{% block body %}
+  <div class="row mt-3">
+  <div class="col"></div>
+  <div class="col-8">
+    {% for question in questions %}
+        <div class="card mt-3 mb-3">
+          <h5 class="card-header">
+            <a href="{{ url_for("qa.question_detail",question_id=question.id) }}" style="text-decoration: None;">
+              {{ question.author.nickname }}
+            </a>
+          </h5>
+          <div class="card-body">
+            <h5 class="card-title">{{ question.title }}</h5>
+            <p class="card-text">{{ question.content }}</p>
+            <p class="card-text" style="text-align: right;">
+              <span class="mx-3" style="color: #aaaaaa;">创建时间:{{ question.create_time }}</span>
+              <a href="{{ url_for("qa.question_detail",question_id=question.id) }}" class="btn btn-primary">
+                查看
+              </a>
+            </p>
+          </div>
+        </div>
+      {% endfor %}
+  </div>
+  <div class="col"></div>
+  </div>
+{% endblock %}
