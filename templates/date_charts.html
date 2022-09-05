@@ -39,6 +39,9 @@
                   };
                   //指定图表的配置数据
                   myChart.setOption(option);
+              },
+              error:function (event){
+                  $("#main").html("<h1>请求服务器数据失败</h1>")
               }
           })
       </script>

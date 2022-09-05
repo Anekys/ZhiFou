@@ -6,6 +6,12 @@ function bindCaptchaBtnClick(){
             alert("邮箱不能为空!");
             return;
         }
+        // 正则验证邮箱格式
+        reg = /^\w+((.\w+)|(-\w+))@[A-Za-z0-9]+((.|-)[A-Za-z0-9]+).[A-Za-z0-9]+$/;
+        if(!reg.test(email)){
+            alert("邮箱格式不正确!");
+            return;
+        }
         $this.off("click")
         let count = 60
         timer = setInterval(function (){
