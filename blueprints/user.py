@@ -10,8 +10,9 @@ from flask_mail import Message
 from model import EmailCaptChaModel, UserModel
 import string, random
 from datetime import datetime
-from .forms import RegisterForm, LoginForm
+from .forms import RegisterForm, LoginForm, ChangeForm
 from werkzeug.security import generate_password_hash, check_password_hash
+from decorators import login_required
 
 bp = Blueprint("user", __name__, url_prefix="/user")
 
@@ -47,6 +48,7 @@ def login():
 def register():
     if request.method == "GET":
         return render_template("register.html")
+    session.clear()
     form = RegisterForm(request.form)
     if form.validate():
         email = form.email.data
@@ -58,7 +60,7 @@ def register():
         db.session.commit()
         return redirect(url_for("user.login"))
     else:
-        session["message"] = "注册失败,提交内容格式错误"
+        session.setdefault("message","注册失败,提交内容格式错误")
         return redirect(url_for("user.register"))
 
 
@@ -98,3 +100,28 @@ def logout():
     session.clear()
     # g.pop("user")
     return redirect("/")
+
+
+@bp.route("/profile", methods=["GET"])
+@login_required
+def profile():
+    user = g.user
+    return render_template("profile.html",user=user)
+
+
+@bp.route("/change_user",methods=["POST"])
+@login_required
+def change_user():
+    form = ChangeForm(request.form)
+    if not form.validate():
+        flash("提交的修改不符合数据格式!")
+        return render_template("profile.html", user=g.user)
+    user = UserModel.query.get(g.user.id)
+    user.nickname = form.nickname.data
+    if form.password != "zhifouzhifou":
+        user.password = form.password.data
+        user.password = generate_password_hash(user.password)
+    db.session.commit()
+    setattr(g,"user",user)
+    flash("信息修改成功!")
+    return render_template("profile.html",user=user)

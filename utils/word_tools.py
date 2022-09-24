@@ -2,11 +2,12 @@
 # @Time    : 2022/9/8 21:39
 # @Author  : Ane
 # @email   : upapqqxyz@gmail.com
-# @FileName: get_word_count.py
+# @FileName: word_tools.py
 # @Software: PyCharm
 import jieba
 import jieba.analyse
 from collections import Counter
+from wordcloud import WordCloud
 
 
 def count_from_str(content, top_limit=0):
@@ -26,12 +27,29 @@ def count_from_str(content, top_limit=0):
     result = []
     for item in counter.most_common(top_limit):
         hashmap = {}
-        hashmap.setdefault("name",item[0])
-        hashmap.setdefault("value",item[1])
+        hashmap.setdefault("name", item[0])
+        hashmap.setdefault("value", item[1])
         result.append(hashmap)
     return result
 
+
+def generate_png(words):
+    word_img = WordCloud(scale=3, background_color="white",
+                         font_path="SIMYOU.TTF",
+                         ).generate(words)
+    word_img.to_file("./static/images/wordcloud.png")
+
+
+def cut_words(content):
+    tags = jieba.analyse.extract_tags(content, topK=100)
+    words = jieba.cut_for_search(content)
+    str_list = []
+    for word in words:
+        str_list.append(word)
+    return " ".join(str_list)
+
+
 if __name__ == '__main__':
-    text = "从其那有座山，山里有座庙，庙里有个老和尚，老和尚给小和尚讲故事"
-    res = count_from_str(text)
+    text = "从前有座山，山里有座庙，庙里有个老和尚，老和尚给小和尚讲故事"
+    res = cut_words(text)
     print(res)

@@ -13,18 +13,28 @@ function bindCaptchaBtnClick(){
             return;
         }
         $this.off("click")
-        let count = 60
+        // 设置60秒倒计时
+        create_timer(60)
+        // 异步请求验证码
+        get_captcha(email)
+    })
+}
+
+function create_timer(time){
+     let count = time
         timer = setInterval(function (){
             if(count>0){
-                $this.text(count+"秒后重新发送")
+                $("#btn-captcha").text(count+"秒后重新发送")
                 count-=1
             }else{
-                $this.text("获取验证码")
+                $("#btn-captcha").text("获取验证码")
                 bindCaptchaBtnClick()
                 clearInterval(timer)
             }
         },1000)
-        $.ajax({
+}
+function get_captcha(email){
+            $.ajax({
             url:"/user/get_captcha",
             method:"post",
             data:{
@@ -42,9 +52,12 @@ function bindCaptchaBtnClick(){
                 }
             }
         })
-    })
 }
 // 等待网页文档加载完毕后才执行
 $(function (){
     bindCaptchaBtnClick();
+    const msg = $("#msg").val()
+    if(msg){
+        alert(msg);
+    }
 })

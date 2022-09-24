@@ -35,8 +35,21 @@
             <li><a class="dropdown-item" href="{{url_for("qa.mine_question")}}">我的问答</a></li>
           </ul>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for("qa.mine_dashboard") }}">数据报表</a>
+                <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+             data-bs-toggle="dropdown" aria-expanded="false">
+            数据报表
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ url_for("qa.mine_dashboard") }}">发帖频率统计</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="{{ url_for("qa.pie_chart") }}">发帖类型统计</a></li>
+               <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="{{ url_for("qa.wordcloud") }}">词频词云图</a></li>
+          </ul>
         </li>
         <li class="nav-litem mx-lg-5">
           <form class="d-flex" role="search" action="{{ url_for("qa.question_search") }}">
@@ -48,7 +61,7 @@
       {% if user %}
         <ul class="navbar-nav  mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link" aria-current="page" href="#">{{ user.nickname }}</a>
+            <a class="nav-link" aria-current="page" href="{{ url_for("user.profile") }}">{{ user.nickname }}</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" aria-current="page" href="{{ url_for("user.logout") }}">注销</a>

@@ -1,9 +1,13 @@
+import time
+
 from flask import Flask, g, session
 import config
 from exts import db, mail
 from blueprints import qa_bp, user_bp
 from flask_migrate import Migrate
 from model import UserModel
+from multiprocessing import Process
+from utils.SpideForZhiHu import InsertData
 
 app = Flask(__name__)
 # 加载config.py中的配置项
@@ -39,6 +43,19 @@ def context_processor():
     if hasattr(g, "user"):
         return {"user": g.user}
     return {}
+
+
+def proc_task():
+    print("爬虫任务已开启")
+    while True:
+        InsertData()
+        time.sleep(3600)
+
+
+@app.before_first_request
+def activate_job():
+    proc = Process(target=proc_task)
+    proc.start()
 
 
 if __name__ == '__main__':

@@ -13,11 +13,10 @@ def get_current_week():
     """
     monday, sunday = datetime.date.today(), datetime.date.today()
     one_day = datetime.timedelta(days=1)
+    seven_day = datetime.timedelta(days=6)
     while monday.weekday() != 0:
         monday -= one_day
-    while sunday.weekday() != 6:
-        sunday += one_day
-
+    sunday = monday + seven_day
     return monday, sunday
 
 
@@ -32,3 +31,6 @@ def get_week():
         one_day = datetime.timedelta(days=i)
         week.setdefault(now_time.date() - one_day, 0)
     return week
+if __name__ == '__main__':
+    a,b = get_current_week()
+    print(a,b)

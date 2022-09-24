@@ -41,3 +41,9 @@ class QuestionForm(wtforms.Form):
 
 class AnswerForm(wtforms.Form):
     content = wtforms.StringField(validators=[InputRequired(),length(min=5, max=256)])
+
+
+class ChangeForm(wtforms.Form):
+    nickname = wtforms.StringField(validators=[length(min=3, max=20)])
+    email = wtforms.StringField(validators=[email()])
+    password = wtforms.StringField(validators=[length(min=6, max=20)])

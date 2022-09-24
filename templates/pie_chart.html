@@ -1,10 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}
+  知否-类型统计
+{% endblock %}
+{% block head %}
+  <script src="{{ url_for('static',filename='js/echarts.js') }}"></script>
+{% endblock %}
+
+{% block body %}
+  <div class="row mt-3">
+    <div class="col"></div>
+    <div class="col-8">
+      <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+      <div id="main" id="main" style="width: 958px;height: 668px"></div>
+      <script type="text/javascript">
+          // 基于准备好的dom，初始化echarts实例
+          var myChart = echarts.init(document.getElementById('main'));
+          $.ajax({
+              url: "/pie_chart",
+              method: "post",
+              success: function (datas) {
+                  let option = {
+                      title: {
+                          text: '问答关键词统计',
+                          subtext: '仅包含当前登录用户数据',
+                          left: 'center'
+                      },
+                      tooltip: {
+                          trigger: 'item'
+                      },
+                      legend: {
+                          orient: 'vertical',
+                          left: 'left'
+                      },
+                      series: [
+                          {
+                              type: 'pie',
+                              radius: '50%',
+                              data: datas.data,
+                              emphasis: {
+                                  itemStyle: {
+                                      shadowBlur: 10,
+                                      shadowOffsetX: 0,
+                                      shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                  }
+                              }
+                          }
+                      ]
+                  };
+                  //指定图表的配置数据
+                  myChart.setOption(option);
+              },
+              error: function (event) {
+                  $("#main").html("<h1>请求服务器数据失败</h1>")
+              }
+          })
+      </script>
+    </div>
+    <div class="col"></div>
+  </div>
+{% endblock %}

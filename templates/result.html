@@ -6,7 +6,7 @@
   <div class="row mt-3">
     <div class="col"></div>
     <div class="col-8" style="background-color: white">
-    <h1>搜索结果:</h1>
+      <h1>搜索结果:</h1>
       {% for question in questions %}
         <div class="card mt-3 mb-3">
           <h5 class="card-header">{{ question.author.nickname }}</h5>
@@ -19,8 +19,51 @@
           </div>
         </div>
       {% endfor %}
+      <nav class="pager">
+        <ul class="pagination pagination-lg justify-content-center">
+          {% if paginate.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="/search?page={{ paginate.prev_num }}" aria-label="Previous" id="previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% endif %}
+          {% for i in paginate.iter_pages() %}
+            <li class="page-item">
+              <a class="page-link" href="/search?page={{ i }}">{{ i }}</a>
+            </li>
+            <a href=></a>
+          {% endfor %}
+
+          {% if paginate.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="/search?page={{ paginate.next_num }}" aria-label="Next" id="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          {% endif %}
+        </ul>
+      </nav>
     </div>
     <div class="col"></div>
   </div>
   </div>
+  <script>
+      function getQueryVariable(variable) {
+          var query = window.location.search.substring(1);
+          var vars = query.split("&");
+          for (var i = 0; i < vars.length; i++) {
+              var pair = vars[i].split("=");
+              if (pair[0] == variable) {
+                  return pair[1];
+              }
+          }
+          return (false);
+      }
+      // each可以遍历选中的所有元素
+      a_list = $("a[class=page-link]").each(function () {
+          prototype_val = $(this).attr("href")
+          $(this).attr("href", prototype_val + "&words=" + getQueryVariable("words"))
+      })
+  </script>
 {% endblock %}

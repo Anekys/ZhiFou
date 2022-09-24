@@ -25,6 +25,32 @@
           </div>
         </div>
       {% endfor %}
+   <nav class="pager">
+        <ul class="pagination pagination-lg justify-content-center">
+          {% if paginate.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="/mine_question?page={{ paginate.prev_num }}" aria-label="Previous" id="previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          {% endif %}
+          {% for i in paginate.iter_pages() %}
+
+            <li class="page-item">
+              <a class="page-link" href="/mine_question?page={{ i }}">{{ i }}</a>
+            </li>
+            <a href=></a>
+          {% endfor %}
+
+          {% if paginate.has_next %}
+             <li class="page-item">
+                      <a class="page-link" href="/mine_question?page={{ paginate.next_num }}" aria-label="Next" id="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+          {% endif %}
+        </ul>
+      </nav>
   </div>
   <div class="col"></div>
   </div>

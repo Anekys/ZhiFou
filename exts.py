@@ -7,8 +7,13 @@
 
 # 加载数据库框架
 from flask_sqlalchemy import SQLAlchemy
+
 db = SQLAlchemy()
 
 # 加载邮箱框架
 from flask_mail import Mail
+
 mail = Mail()
+
+# 创建session对象
+session = db.session

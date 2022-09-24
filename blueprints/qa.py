@@ -9,16 +9,25 @@ from exts import db
 from decorators import login_required
 from .forms import QuestionForm, AnswerForm
 from model import QuestionModel, AnswerModel, UserModel
-from utils.sort import sort_answer_by_time_desc
 from utils.get_time import get_week
+from utils.word_tools import count_from_str, generate_png, cut_words
+import os
 
 bp = Blueprint("qa", __name__, url_prefix="/")
 
 
-@bp.route("/", methods=["GET", "POST"])
+@bp.route("/", methods=["GET"])
 def index():
-    questions = QuestionModel.query.order_by(db.text("-create_time")).all()
-    return render_template("index.html", questions=questions)
+    # questions = QuestionModel.query.order_by(QuestionModel.id.desc()).limit(4).offset(0).all()
+    return redirect(url_for("qa.next_page", pageIndex=1))
+
+
+@bp.route("/page/<int:pageIndex>")
+def next_page(pageIndex):
+    pageSize = 3
+    paginate = QuestionModel.query.order_by(db.text("-create_time")).paginate(pageIndex, pageSize, error_out=False)
+    stus = paginate.items
+    return render_template("index.html", paginate=paginate, questions=stus)
 
 
 @bp.route("/public_question", methods=["GET", "POST"])
@@ -43,9 +52,13 @@ def public_question():
 @bp.route("/question/<int:question_id>")
 def question_detail(question_id):
     question = QuestionModel.query.get(question_id)
-    answer = AnswerModel.query.filter_by(question_id=question_id).all()
-    sort_answer_by_time_desc(answer)
-    return render_template("detail.html", question=question, answers=answer)
+    page = int(request.args.get('page', 1))
+    pageSize = 5
+    paginate = AnswerModel.query.order_by(db.text("-create_time")).filter_by(question_id=question_id).paginate(page,
+                                                                                                               pageSize,
+                                                                                                               error_out=False)
+    answer = paginate.items
+    return render_template("detail.html", question=question, answers=answer, paginate=paginate)
 
 
 @bp.route("/submit_answer/<int:question_id>", methods=["POST"])
@@ -68,20 +81,27 @@ def submit_answer(question_id):
 
 @bp.route("/search", methods=["GET"])
 def question_search():
+    page = int(request.args.get('page', 1))
+    pageSize = 3
     words = request.args.get("words")
-    questions = QuestionModel.query.filter(QuestionModel.title.like(f'%{words}%')).all()
-    if questions == []:
-        questions = QuestionModel.query.filter(QuestionModel.content.like(f"%{words}%")).all()
-        if questions == []:
-            questions = QuestionModel.query.join(UserModel).filter(UserModel.nickname.like(f"%{words}%")).all()
-    return render_template("result.html", questions=questions)
+    paginates = QuestionModel.query.filter(QuestionModel.title.like(f'%{words}%'))
+    if paginates == []:
+        paginates = QuestionModel.query.filter(QuestionModel.content.like(f"%{words}%"))
+        if paginates == []:
+            paginates = QuestionModel.query.join(UserModel).filter(UserModel.nickname.like(f"%{words}%"))
+    paginates = paginates.paginate(page, pageSize, error_out=False)
+    questions = paginates.items
+    return render_template("result.html", questions=questions, paginate=paginates)
 
 
 @bp.route("/mine_question")
 @login_required
 def mine_question():
-    questions = QuestionModel.query.filter_by(author=g.user).all()
-    return render_template("mine.html", questions=questions)
+    page = int(request.args.get('page', 1))
+    pageSize = 3
+    paginate = QuestionModel.query.filter_by(author=g.user).paginate(page, pageSize, error_out=False)
+    questions = paginate.items
+    return render_template("mine.html", questions=questions, paginate=paginate)
 
 
 @bp.route("/dashboard", methods=["GET", "POST"])
@@ -101,3 +121,30 @@ def mine_dashboard():
         "week_date": date,
         "week_data": data
     })
+
+
+@bp.route("/pie_chart", methods=["GET", "POST"])
+@login_required
+def pie_chart():
+    if request.method == "GET":
+        return render_template("pie_chart.html")
+    questions = QuestionModel.query.filter_by(author=g.user).all()
+    title_str = ""
+    for question in questions:
+        title_str += question.title
+    result = count_from_str(title_str)
+    return jsonify({
+        "data":result
+    })
+
+
+@bp.route("/wordcloud",methods=["GET"])
+@login_required
+def wordcloud():
+    questions = QuestionModel.query.filter_by(author=g.user).all()
+    title_str = ""
+    for question in questions:
+        title_str += question.title
+    result = cut_words(title_str)
+    generate_png(result)
+    return render_template("wordcloud.html")

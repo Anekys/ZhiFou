@@ -2,31 +2,44 @@
 {% block title %}
   知否-个人信息
 {% endblock %}
+{% block head %}
+  <script src="{{ url_for('static',filename='js/profile.js') }}"></script>
+{% endblock %}
 {% block body %}
-  <div class="row">
+  <div class="row mt-5">
     <div class="col"></div>
-    <div class="col-8">
-      <form class="row g-3">
+    <div class="col-6">
+      <form class="row" action="{{ url_for("user.change_user") }}" method="post">
         <div class="mb-3 row">
           <label for="inputNickname" class="col-sm-2 col-form-label">用户昵称:</label>
           <div class="col-sm-10">
-            <input type="text" class="form-control" id="inputNickname" value="nickname">
+            <input name="nickname" type="text" class="form-control" id="inputNickname" value="{{ user.nickname }}">
           </div>
         </div>
         <div class="mb-3 row">
           <label for="staticEmail" class="col-sm-2 col-form-label">邮箱地址:</label>
           <div class="col-sm-10">
-            <input type="text" readonly class="form-control-plaintext" id="staticEmail" value="email@example.com">
+            <input name="email" type="text" readonly class="form-control-plaintext" id="staticEmail"
+                   value="{{ user.email }}">
           </div>
         </div>
-        <div class="mb-3 row">
+        <div class="input-group mb-3">
           <label for="inputPassword" class="col-sm-2 col-form-label">密码:</label>
-          <div class="col-sm-10">
-            <input type="password" class="form-control" id="inputPassword" value="******">
+          <input name="password" type="password" class="form-control" aria-label="Text input with checkbox"
+                 value="zhifouzhifou">
+          <div class="input-group-text" id="inputPassword">
+            <input class="form-check-input mt-0" type="checkbox" value=""
+                   aria-label="Checkbox for following text input" name="select">
+            <span class="mx-2">查看密码</span>
           </div>
         </div>
-        <div class="col-auto">
-          <button type="submit" class="btn btn-primary mb-3">确认修改</button>
+        {% for message in get_flashed_messages() %}
+          <div class="text-danger">{{ message }}</div>
+        {% endfor %}
+        <div class="mb-3 row" style="text-align: right;">
+          <div class="pull-right mt-3 ps-5">
+            <button type="submit" class="btn btn-primary">确认修改</button>
+          </div>
         </div>
       </form>
     </div>
